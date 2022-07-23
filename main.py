@@ -2,8 +2,10 @@ import os
 import discord as ds
 import scrap as sc
 import random
+from keep_alive import keep_alive
 
 client = ds.Client()
+
 url = "https://store.steampowered.com/search/results/?query=&start={}&count=500&dynamic_data=&force_infinite=1&maxprice=free&category1=998&snr=1_7_7_230_7&infinite=1"
 
 
@@ -32,5 +34,6 @@ async def on_message(message):
         await message.channel.send(msg)
 
 
+keep_alive()
 Token = os.environ['_TOKEN']
 client.run(Token)
