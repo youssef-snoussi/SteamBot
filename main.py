@@ -27,8 +27,8 @@ async def on_message(message):
         parsed_data = sc.parse_data(data)
         suggestion = parsed_data[sc.get_random_suggestion(parsed_data)]
         msg = "**Title**: {} \n **Release date**: {} \n **Price**: {} \n {}".format(
-            suggestion['title'], suggestion['price'],
-            suggestion['release_date'], suggestion['link'])
+            suggestion['title'], suggestion['release_date'],
+            suggestion['price'], suggestion['link'])
         await message.channel.send(msg)
 
 
