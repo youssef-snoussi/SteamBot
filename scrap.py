@@ -4,7 +4,7 @@ import random
 
 
 def format_url(url, number):
-    return url.format(number)
+    return url.format(str(number))
 
 
 def total_count(url):
@@ -26,7 +26,7 @@ def parse_data(data):
     for game in games:
         title = game.find('span', {'class': 'title'}).text
         price = game.find('div', {'class': 'search_price'}).text
-        release_date = game.find('div', {'class': 'search_released'})
+        release_date = game.find('div', {'class': 'search_released'}).text
         games_data.append({
             'link': game['href'],
             'title': title,
