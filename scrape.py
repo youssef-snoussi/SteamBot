@@ -64,3 +64,42 @@ def get_free_game(url):
     parsed_data = parse_data(data)
     game = parsed_data[get_random_suggestion(parsed_data)]
     return game
+
+
+def get_game_data(game):
+    req = requests.get(game['link'])
+    data = req.text
+    soup = BeautifulSoup(data, 'html.parser')
+    sysreq = soup.find_all("div", {"class": "game_page_autocollapse sys_req"})
+    sysreq1 = soup.find_all(
+        'div', {'class': 'game_area_sys_req sysreq_content active'})
+    sysreq2 = soup.find_all('div',
+                            {'class': 'game_area_sys_req sysreq_content '})
+    sysreq = sysreq2 + sysreq1
+    for s in sysreq:
+        if s['data-os'] == "win":
+            req = s.find_all('ul', {'class': 'bb_ul'})
+            if req[0]:
+                lines = req[0].find_all("li")
+                min_win_req = [line.text for line in lines]
+            if req[1]:
+                lines = req[1].find_all("li")
+                rec_win_req = [line.text for line in lines]
+        if s['data-os'] == 'mac':
+            req = s.find_all('ul', {'class': 'bb_ul'})
+            if req[0]:
+                lines = req[0].find_all("li")
+                min_mac_req = [line.text for line in lines]
+            if req[1]:
+                lines = req[1].find_all("li")
+                rec_mac_req = [line.text for line in lines]
+        if s['data-os'] == 'linux':
+            req = s.find_all('ul', {'class': 'bb_ul'})
+            if req[0]:
+                lines = req[0].find_all("li")
+                min_linux_req = [line.text for line in lines]
+            if req[1]:
+                lines = req[1].find_all("li")
+                rec_linux_req = [line.text for line in lines]
+
+    return min_win_req, rec_win_req, min_mac_req, rec_mac_req, min_linux_req, rec_linux_req

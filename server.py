@@ -5,7 +5,7 @@ from datetime import datetime
 import time
 from cachelib.simple import SimpleCache
 from random import randint
-from scrape import get_all_free_games
+from scrape import get_all_free_games, get_game_data
 
 app = Flask('')
 cache = SimpleCache()
@@ -48,4 +48,8 @@ def get_game(user_request):
     if user_request == "free":
         free_games = cache.get('free_games')
         sug = randint(0, len(free_games) - 1)
-        return free_games[sug]
+        game = free_games[sug]
+        # sysreq1, sysreq2
+        return game
+
+    
