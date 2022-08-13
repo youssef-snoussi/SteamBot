@@ -38,10 +38,10 @@ def parse_data(data):
     return games_data
 
 
-def get_random_suggestion(data):
-    l = len(data) - 1
-    sug = randint(0, l)
-    return sug
+# def get_random_suggestion(data):
+#     l = len(data) - 1
+#     sug = randint(0, l)
+#     return sug
 
 
 def get_all_free_games(url):
@@ -57,17 +57,18 @@ def get_all_free_games(url):
     return games
 
 
-def get_free_game(url):
-    number = randint(0, get_total_count(url))
-    formated_url = format_url(url, number)
-    data = get_data(formated_url)
-    parsed_data = parse_data(data)
-    game = parsed_data[get_random_suggestion(parsed_data)]
-    return game
+# def get_free_game(url):
+#     number = randint(0, get_total_count(url))
+#     formated_url = format_url(url, number)
+#     data = get_data(formated_url)
+#     parsed_data = parse_data(data)
+#     game = parsed_data[get_random_suggestion(parsed_data)]
+#     return game
 
 
-def get_game_data(game):
-    req = requests.get(game['link'])
+def get_game_requirements(game):
+    url = game['link']
+    req = requests.get(url)
     data = req.text
     soup = BeautifulSoup(data, 'html.parser')
     sysreq = soup.find_all("div", {"class": "game_page_autocollapse sys_req"})
@@ -76,30 +77,17 @@ def get_game_data(game):
     sysreq2 = soup.find_all('div',
                             {'class': 'game_area_sys_req sysreq_content '})
     sysreq = sysreq2 + sysreq1
-    for s in sysreq:
-        if s['data-os'] == "win":
-            req = s.find_all('ul', {'class': 'bb_ul'})
-            if req[0]:
-                lines = req[0].find_all("li")
-                min_win_req = [line.text for line in lines]
-            if req[1]:
-                lines = req[1].find_all("li")
-                rec_win_req = [line.text for line in lines]
-        if s['data-os'] == 'mac':
-            req = s.find_all('ul', {'class': 'bb_ul'})
-            if req[0]:
-                lines = req[0].find_all("li")
-                min_mac_req = [line.text for line in lines]
-            if req[1]:
-                lines = req[1].find_all("li")
-                rec_mac_req = [line.text for line in lines]
-        if s['data-os'] == 'linux':
-            req = s.find_all('ul', {'class': 'bb_ul'})
-            if req[0]:
-                lines = req[0].find_all("li")
-                min_linux_req = [line.text for line in lines]
-            if req[1]:
-                lines = req[1].find_all("li")
-                rec_linux_req = [line.text for line in lines]
-
-    return min_win_req, rec_win_req, min_mac_req, rec_mac_req, min_linux_req, rec_linux_req
+    data = []
+    for req in sysreq:
+        os = req['data-os']
+        d = {os: {}}
+        for s in req.find_all('ul'):
+            if "class" in s.attrs:
+                continue
+            level = s.find('strong').text
+            for reqs in s.find_all('ul'):
+                items = reqs.find_all('li')
+                items = [item.text for item in items]
+                d[os][level] = items
+        data.append(d)
+    return data
